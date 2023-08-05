@@ -14,7 +14,7 @@ class Plane:
 
 plane1 = Plane(100,700,0,True,'flight/plane_red_right.png')
 plane2 = Plane(1400,700,0,False,'flight/plane_red_left.png')
-maxplanespeed = 1000
+maxplanespeed = 1500
 speedconstant = 1/100
 
 def setup() -> None:
@@ -27,23 +27,24 @@ def update() -> None:
 
 
 def update_objects() -> None:
-    update_plane(plane1)
+    update_plane(plane2)
 
 
 def update_plane(plane):
     if is_key_down("space") and plane.speed < maxplanespeed:
-        plane.speed+=1
+        plane.speed+=10
     elif plane.speed>0:
-        plane.speed-=1
+        plane.speed-=4
     if is_key_down("d"):
-        plane.angle-=3
+        plane.angle-=5
     if is_key_down("f"):
-        plane.angle+=3
+        plane.angle+=5
     radian = plane.angle/360*2*math.pi
-    if plane.right:
-        radian*=-1
+    if not plane.right:
+        radian += math.pi
     x_speed = math.cos(radian) * speedconstant * plane.speed
     y_speed = math.sin(radian) * speedconstant * plane.speed
+    y_speed *= -1
     plane.x += x_speed
     plane.y += y_speed
 
