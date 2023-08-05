@@ -12,8 +12,8 @@ class Plane:
         self.sprite_url = sprite_url
 
 
-plane1 = Plane(100,700,0,True,'super_flight_bros/airplane_red_right.png')
-plane2 = Plane(1400,700,0,False,'super_flight_bros/airplanes_red.png')
+plane1 = Plane(100,700,0,True,'flight/plane_red_right.png')
+plane2 = Plane(1400,700,0,False,'flight/plane_red_left.png')
 maxplanespeed = 1000
 speedconstant = 1/100
 
