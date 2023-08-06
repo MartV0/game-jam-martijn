@@ -20,17 +20,25 @@ class Laser:
         self.count = count
 
 
+class Bullet:
+    def __init__(self, x, y, direction):
+        self.x = x
+        self.y = y
+        self.direction = direction
+
+
 plane1 = Plane(100,700,0,True,'flight/plane_red_right.png')
 plane2 = Plane(1400,700,0,False,'flight/plane_red_left.png')
 maxplanespeed = 1500
 speedconstant = 1/100
 lasers = []
 laserdelay = 0
+bullets = []
+bulletdelay = 0
 
 def setup() -> None:
     screen(1500,800)
     add_key_down_event('g', lambda : laser_event(plane2))
-
 
 
 def update() -> None:
@@ -45,6 +53,26 @@ def update_objects() -> None:
     global laserdelay
     if laserdelay > 0:
         laserdelay -= 1
+    update_bullets()
+
+
+def update_bullets():
+    global bulletdelay
+    bulletdelay -= 1
+    if is_key_down('b') and bulletdelay <= 0:
+        bullets.append(Bullet(plane2.x, plane2.y, plane2.angle))
+        bulletdelay=10
+    for bullet in bullets:
+        xv, yv = get_direction_vector(bullet.direction, plane2.right)
+        bullet_speed = 20
+        bullet.x += bullet_speed * xv
+        bullet.y += bullet_speed * yv
+    bullet = [bullet for bullet in bullets if not is_offscreen(bullet.x, bullet.y)]
+
+
+def is_offscreen(x, y):
+    return x < 0 or y < 0 or x > 1500 or y > 800
+
 
 
 def update_plane(plane):
@@ -56,7 +84,7 @@ def update_plane(plane):
         plane.angle-=5
     if is_key_down("f"):
         plane.angle+=5
-    x_speed, y_speed = get_plane_direction_vector(plane)
+    x_speed, y_speed = get_direction_vector(plane.angle, plane.right)
     x_speed *= speedconstant * plane.speed
     y_speed *= speedconstant * plane.speed
     plane.x += x_speed
@@ -70,9 +98,9 @@ def update_laser(laser):
         lasers.remove(laser)
 
 
-def get_plane_direction_vector(plane):
-    radian = plane.angle/360*2*math.pi
-    if not plane.right:
+def get_direction_vector(angle, right):
+    radian = angle/360*2*math.pi
+    if not right:
         radian += math.pi
     x = math.cos(radian)
     y = math.sin(radian)
@@ -97,7 +125,7 @@ def laser_event(plane):
     global laserdelay
     if laserdelay <= 0:
         laser_length = 2000
-        xv, yv = get_plane_direction_vector(plane)
+        xv, yv = get_direction_vector(plane.angle, plane.right)
         x = plane.x + xv*(laser_length/2 + 30)
         y = plane.y + yv*(laser_length/2 + 30)
         lasers.append(Laser(x, y, plane.angle, 20))
@@ -109,6 +137,7 @@ def draw() -> None:
     draw_lasers(lasers)
     draw_plane(plane1)
     draw_plane(plane2)
+    draw_bullets(bullets)
 
 
 def draw_plane(plane: Plane) -> None:
@@ -120,3 +149,6 @@ def draw_lasers(lasers):
         rect((255,0,0), laser.x, laser.y, 2000, 10, laser.angle)
 
 
+def draw_bullets(bullets):
+    for bullet in bullets:
+        ellipse((200,200,0), bullet.x, bullet.y, 20, 20)
