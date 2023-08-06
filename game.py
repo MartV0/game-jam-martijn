@@ -47,8 +47,20 @@ def update_plane(plane):
     y_speed *= -1
     plane.x += x_speed
     plane.y += y_speed
+    plane.x, plane.y = teleport_if_offscreen((plane.x, plane.y))
 
 
+def teleport_if_offscreen(coordinates):
+    x,y = coordinates
+    if x>1500:
+        x=0
+    elif x<0:
+        x=1500
+    if y<0:
+        y=0
+    elif y>800:
+        y=800
+    return (x,y)
 
 
 def draw() -> None:
