@@ -1,5 +1,6 @@
 from jorcademy import *
 import math
+import random
 
 
 class Plane:
@@ -27,6 +28,15 @@ class Bullet:
         self.direction = direction
 
 
+class Ghost:
+    def __init__(self, x, y, direction, speed):
+        self.x = x
+        self.y = y
+        self.direction = direction
+        self.speed = speed
+
+
+w, h = 1500, 800
 plane1 = Plane(100,700,0,True,'flight/plane_red_right.png')
 plane2 = Plane(1400,700,0,False,'flight/plane_red_left.png')
 maxplanespeed = 1500
@@ -35,6 +45,8 @@ lasers = []
 laserdelay = 0
 bullets = []
 bulletdelay = 0
+ghosts = []
+
 
 def setup() -> None:
     screen(1500,800)
@@ -54,6 +66,23 @@ def update_objects() -> None:
     if laserdelay > 0:
         laserdelay -= 1
     update_bullets()
+    update_ghosts()
+
+
+def update_ghosts():
+    roll = random.randint(0,120)
+    if roll == 20:
+        x = random.randint(0, w)
+        y = random.randint(0, h)
+        d = random.randint(0, 359)
+        ghosts.append(Ghost(x, y, d, 0))
+    for ghost in ghosts:
+        ghost.direction += random.randint(-10,10)
+        vx, vy = get_direction_vector(ghost.direction, False)
+        speed = 2
+        ghost.x += speed * vx
+        ghost.y += speed * vy
+        ghost.x, ghost.y = teleport_if_offscreen((ghost.x, ghost.y))
 
 
 def update_bullets():
@@ -138,6 +167,7 @@ def draw() -> None:
     draw_plane(plane1)
     draw_plane(plane2)
     draw_bullets(bullets)
+    draw_ghosts(ghosts)
 
 
 def draw_plane(plane: Plane) -> None:
@@ -152,3 +182,8 @@ def draw_lasers(lasers):
 def draw_bullets(bullets):
     for bullet in bullets:
         ellipse((200,200,0), bullet.x, bullet.y, 20, 20)
+
+
+def draw_ghosts(ghosts):
+    for ghost in ghosts:
+        image("flight/ghost.png", ghost.x, ghost.y, 4, 0)
