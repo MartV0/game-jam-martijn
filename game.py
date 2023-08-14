@@ -50,7 +50,7 @@ ghosts = []
 
 def setup() -> None:
     screen(1500,800)
-    add_key_down_event('g', lambda : laser_event(plane2))
+    add_key_down_event('g', lambda : laser_event(plane1))
 
 
 def update() -> None:
@@ -59,7 +59,7 @@ def update() -> None:
 
 
 def update_objects() -> None:
-    update_plane(plane2)
+    update_plane(plane1)
     for laser in lasers:
         update_laser(laser)
     global laserdelay
@@ -68,6 +68,7 @@ def update_objects() -> None:
     update_bullets()
     update_ghosts()
     bullet_collisions()
+    laser_collisions()
 
 
 def update_ghosts():
@@ -128,7 +129,7 @@ def update_laser(laser):
         lasers.remove(laser)
 
 
-def get_direction_vector(angle, right):
+def get_direction_vector(angle, right = False):
     radian = angle/360*2*math.pi
     if not right:
         radian += math.pi
@@ -168,20 +169,40 @@ def laser_event(plane):
 
 def bullet_collisions():
     bullet_radius = 10
-    # for simplicitys sake we threat the ghosts as cirkels during intersections
+    # for simplicitys sake we threat the ghosts as circles during intersections
     ghost_radius = 28.5 
     for bullet in bullets:
         for ghost in ghosts:
-            distance = ((bullet.x-ghost.x)**2 + (bullet.y-ghost.y)**2)**0.5
-            if distance < bullet_radius + ghost_radius:
+            d = distance(ghost.x, ghost.y, bullet.x, bullet.y)
+            if d < bullet_radius + ghost_radius:
                 ghosts.remove(ghost)
 
+
+def laser_collisions():
+    laser_thickness = 5
+    ghost_radius = 28.5
+    for laser in lasers:
+        vx, vy = get_direction_vector(laser.angle)
+        m = vy / vx
+        b = laser.y - m*laser.x 
+        for ghost in ghosts:
+            m2 = -1 / m
+            b2 = ghost.y - m2 * ghost.x
+            x = (b - b2) / (m2 - m)
+            y = m2 * x + b2
+            d = distance(x, y, ghost.x, ghost.y)
+            if d < 5 + 28.5 and distance(laser.x, laser.y, ghost.x, ghost.y) < 1000:
+                ghosts.remove(ghost)
+            
+
+def distance(x1, y1, x2, y2):
+    return ((x1-x2)**2 + (y1-y2)**2)**0.5
 
 
 def draw() -> None:
     backdrop((50,150,255))
     draw_lasers(lasers)
-    # draw_plane(plane1)
+    draw_plane(plane1)
     draw_plane(plane2)
     draw_bullets(bullets)
     draw_ghosts(ghosts)
