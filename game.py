@@ -39,7 +39,7 @@ class Ghost:
 w, h = 1500, 800
 plane1 = Plane(100,700,0,True,'flight/plane_red_right.png')
 plane2 = Plane(1400,700,0,False,'flight/plane_red_left.png')
-maxplanespeed = 1500
+maxplanespeed = 750
 speedconstant = 1/100
 lasers = []
 laserdelay = 0
@@ -67,6 +67,7 @@ def update_objects() -> None:
         laserdelay -= 1
     update_bullets()
     update_ghosts()
+    bullet_collisions()
 
 
 def update_ghosts():
@@ -82,7 +83,7 @@ def update_ghosts():
         speed = 2
         ghost.x += speed * vx
         ghost.y += speed * vy
-        ghost.x, ghost.y = teleport_if_offscreen((ghost.x, ghost.y))
+        ghost.x, ghost.y = teleport_if_offscreen((ghost.x, ghost.y), False)
 
 
 def update_bullets():
@@ -110,9 +111,9 @@ def update_plane(plane):
     elif plane.speed>0:
         plane.speed-=4
     if is_key_down("d"):
-        plane.angle-=5
+        plane.angle-=3.5
     if is_key_down("f"):
-        plane.angle+=5
+        plane.angle+=3.5
     x_speed, y_speed = get_direction_vector(plane.angle, plane.right)
     x_speed *= speedconstant * plane.speed
     y_speed *= speedconstant * plane.speed
@@ -137,12 +138,16 @@ def get_direction_vector(angle, right):
     return (x, y)
 
 
-def teleport_if_offscreen(coordinates):
+def teleport_if_offscreen(coordinates, teleport = True):
     x,y = coordinates
-    if x>1500:
+    if x>1500 and teleport:
         x=0
-    elif x<0:
+    elif x>1500:
         x=1500
+    elif x<0 and teleport:
+        x=1500
+    elif x<0:
+        x=0
     if y<0:
         y=0
     elif y>800:
@@ -161,10 +166,22 @@ def laser_event(plane):
         laserdelay = 30
 
 
+def bullet_collisions():
+    bullet_radius = 10
+    # for simplicitys sake we threat the ghosts as cirkels during intersections
+    ghost_radius = 28.5 
+    for bullet in bullets:
+        for ghost in ghosts:
+            distance = ((bullet.x-ghost.x)**2 + (bullet.y-ghost.y)**2)**0.5
+            if distance < bullet_radius + ghost_radius:
+                ghosts.remove(ghost)
+
+
+
 def draw() -> None:
     backdrop((50,150,255))
     draw_lasers(lasers)
-    draw_plane(plane1)
+    # draw_plane(plane1)
     draw_plane(plane2)
     draw_bullets(bullets)
     draw_ghosts(ghosts)
@@ -181,9 +198,10 @@ def draw_lasers(lasers):
 
 def draw_bullets(bullets):
     for bullet in bullets:
-        ellipse((200,200,0), bullet.x, bullet.y, 20, 20)
+        ellipse((255,255,0), bullet.x, bullet.y, 20, 20)
 
 
 def draw_ghosts(ghosts):
     for ghost in ghosts:
+        # ellipse((0,255,0), ghost.x, ghost.y, 57, 57) 
         image("flight/ghost.png", ghost.x, ghost.y, 4, 0)
