@@ -2,6 +2,7 @@ from jorcademy import *
 import flight.laser as laser
 import flight.plane as plane
 import flight.bullet as bullet
+import flight.shell as shell
 import flight.ghost as ghost
 
 
@@ -18,9 +19,10 @@ def update() -> None:
 def update_objects() -> None:
     plane.update_plane(plane.plane1)
     laser.update_lasers()
-    bullet.update_bullets(plane.plane1)
+    shell.update_shells(plane.plane1)
     ghost.update_ghosts()
-    bullet.bullet_collisions(ghost.ghosts)
+    # bullet.bullet_collisions(ghost.ghosts)
+    shell.shell_collisions(ghost.ghosts)
     laser.laser_collisions(ghost.ghosts)
 
 
@@ -29,5 +31,5 @@ def draw() -> None:
     laser.draw_lasers()
     plane.draw_plane(plane.plane1)
     plane.draw_plane(plane.plane2)
-    bullet.draw_bullets()
+    shell.draw_shells()
     ghost.draw_ghosts()

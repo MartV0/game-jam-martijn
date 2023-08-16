@@ -13,18 +13,30 @@ class Bullet:
         self.direction = direction
 
 
-def update_bullets(plane2):
+def update_bullets(plane, bullets):
     global bulletdelay
     bulletdelay -= 1
     if is_key_down('b') and bulletdelay <= 0:
-        bullets.append(Bullet(plane2.x, plane2.y, plane2.angle))
         bulletdelay=10
+        bullets.append(create_bullet(plane))
     for bullet in bullets:
-        xv, yv = get_direction_vector(bullet.direction, plane2.right)
-        bullet_speed = 20
-        bullet.x += bullet_speed * xv
-        bullet.y += bullet_speed * yv
+        move_bullet(bullet)
     bullet = [bullet for bullet in bullets if not is_offscreen(bullet.x, bullet.y)]
+
+
+def move_bullet(bullet):
+    xv, yv = get_direction_vector(bullet.direction)
+    bullet_speed = 20
+    bullet.x += bullet_speed * xv
+    bullet.y += bullet_speed * yv
+
+
+def create_bullet(plane):
+    angle = plane.angle
+    if plane.right:
+        angle += 180
+    print(angle)
+    return Bullet(plane.x, plane.y, angle)
 
 
 def draw_bullets():

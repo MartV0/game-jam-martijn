@@ -13,7 +13,7 @@ class Plane:
 
 
 plane1 = Plane(100,700,0,True,'flight/plane_red_right.png')
-plane2 = Plane(1400,700,0,False,'flight/plane_red_left.png')
+plane2 = Plane(1400,700,0,True,'flight/plane_red_left.png')
 maxplanespeed = 750
 speedconstant = 1/100
 
