@@ -4,6 +4,7 @@ import flight.plane as plane
 import flight.bullet as bullet
 import flight.shell as shell
 import flight.ghost as ghost
+import flight.fireball as fireball
 
 
 def setup() -> None:
@@ -18,18 +19,23 @@ def update() -> None:
 
 def update_objects() -> None:
     plane.update_plane(plane.plane1)
-    laser.update_lasers()
-    shell.update_shells(plane.plane1)
+    laser.update_lasers(plane.plane1)
+    # bullet.update_bullets(plane.plane1)
+    # shell.update_shells(plane.plane1)
+    fireball.update_fireballs(plane.plane1)
     ghost.update_ghosts()
-    # bullet.bullet_collisions(ghost.ghosts)
-    shell.shell_collisions(ghost.ghosts)
-    laser.laser_collisions(ghost.ghosts)
+    # bullet.bullet_collisions(plane.plane1, ghost.ghosts)
+    # shell.shell_collisions(plane.plane1, ghost.ghosts)
+    fireball.fireball_collisions(plane.plane1, ghost.ghosts)
+    laser.laser_collisions(plane.plane1, ghost.ghosts)
 
 
 def draw() -> None:
     backdrop((50,150,255))
-    laser.draw_lasers()
+    laser.draw_lasers(plane.plane1.lasers)
     plane.draw_plane(plane.plane1)
     plane.draw_plane(plane.plane2)
-    shell.draw_shells()
+    # shell.draw_shells(plane.plane1.shells)
+    # bullet.draw_bullets(plane.plane1.bullets)
+    fireball.draw_fireballs(plane.plane1.bullets)
     ghost.draw_ghosts()

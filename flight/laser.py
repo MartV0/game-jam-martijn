@@ -2,9 +2,6 @@ from flight.coordinates import *
 from jorcademy import *
 
 
-lasers = []
-laserdelay = 0
-
 class Laser:
     def __init__(self, x, y, angle, count):
         self.x = x
@@ -13,40 +10,38 @@ class Laser:
         self.count = count
 
 
-def update_lasers():
-    global laserdelay
-    if laserdelay > 0:
-        laserdelay -= 1
-    for laser in lasers:
-        update_laser(laser)
+def update_lasers(plane):
+    if plane.laserdelay > 0:
+        plane.laserdelay -= 1
+    for laser in plane.lasers:
+        update_laser(laser, plane)
 
 
-def update_laser(laser):
+def update_laser(laser, plane):
     laser.count -= 1
     if laser.count == 0:
-        lasers.remove(laser)
+        plane.lasers.remove(laser)
 
 
 def laser_event(plane):
-    global laserdelay
-    if laserdelay <= 0:
+    if plane.laserdelay <= 0:
         laser_length = 2000
         xv, yv = get_direction_vector(plane.angle, plane.right)
         x = plane.x + xv*(laser_length/2 + 30)
         y = plane.y + yv*(laser_length/2 + 30)
-        lasers.append(Laser(x, y, plane.angle, 20))
-        laserdelay = 30
+        plane.lasers.append(Laser(x, y, plane.angle, 20))
+        plane.laserdelay = 30
 
 
-def draw_lasers():
+def draw_lasers(lasers):
     for laser in lasers:
         rect((255,0,0), laser.x, laser.y, 2000, 10, laser.angle)
 
 
-def laser_collisions(ghosts):
+def laser_collisions(plane, ghosts):
     laser_thickness = 5
     ghost_radius = 28.5
-    for laser in lasers:
+    for laser in plane.lasers:
         vx, vy = get_direction_vector(laser.angle)
         m = vy / vx
         b = laser.y - m*laser.x 

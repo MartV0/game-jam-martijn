@@ -10,6 +10,14 @@ class Plane:
         self.speed = 0
         self.right = right
         self.sprite_url = sprite_url
+        self.lasers = []
+        self.laserdelay = 0
+        self.shells = []
+        self.shelldelay = 0
+        self.bullets = []
+        self.bulletdelay = 0
+
+
 
 
 plane1 = Plane(100,700,0,True,'flight/plane_red_right.png')
