@@ -27,6 +27,8 @@ def update_ghosts():
         speed = 2
         ghost.x += speed * vx
         ghost.y += speed * vy
+        if is_offscreen(ghost.x, ghost.y):
+            ghost.direction = bounce_angle(ghost.direction)
         ghost.x, ghost.y = teleport_if_offscreen((ghost.x, ghost.y), False)
 
 

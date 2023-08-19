@@ -35,7 +35,6 @@ def create_bullet(plane):
     angle = plane.angle
     if plane.right:
         angle += 180
-    print(angle)
     return Bullet(plane.x, plane.y, angle)
 
 
