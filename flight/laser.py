@@ -2,6 +2,9 @@ from flight.coordinates import *
 from jorcademy import *
 
 
+laser_length = 880
+
+
 class Laser:
     def __init__(self, x, y, angle, count):
         self.x = x
@@ -25,7 +28,6 @@ def update_laser(laser, plane):
 
 def laser_event(plane):
     if plane.laserdelay <= 0:
-        laser_length = 2000
         xv, yv = get_direction_vector(plane.angle, plane.right)
         x = plane.x + xv*(laser_length/2 + 30)
         y = plane.y + yv*(laser_length/2 + 30)
@@ -35,7 +37,8 @@ def laser_event(plane):
 
 def draw_lasers(lasers):
     for laser in lasers:
-        rect((255,0,0), laser.x, laser.y, 2000, 10, laser.angle)
+        # rect((255,0,0), laser.x, laser.y, 2000, 10, laser.angle)
+        image("flight/lightning_bolt.png", laser.x, laser.y, 4, laser.angle - 90)
 
 
 def laser_collisions(plane, ghosts):
@@ -51,6 +54,6 @@ def laser_collisions(plane, ghosts):
             x = (b - b2) / (m2 - m)
             y = m2 * x + b2
             d = distance(x, y, ghost.x, ghost.y)
-            if d < 5 + 28.5 and distance(laser.x, laser.y, ghost.x, ghost.y) < 1000:
+            if d < 5 + 28.5 and distance(laser.x, laser.y, ghost.x, ghost.y) < laser_length/2:
                 ghosts.remove(ghost)
 
